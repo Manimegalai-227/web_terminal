@@ -1,0 +1,503 @@
+
+Question 2(a): Create an XML file for a school containing at least three courses. Each course should contain the following elements:
+
+Write an internal DTD to define the structure of the XML document. Ensure that every course has the required elements and make the student registration number (reg_no) optional.
+Question 2(b): Validate the XML document and demonstrate what happens when a required element is missing. Show the validation output for both valid and invalid XML documents.
+
+code:school.xml
+
+python -m pip install lxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE school [
+    <!ELEMENT school (course+)>
+    <!ELEMENT course (course_code, course_name, reg_no?)>
+    <!ELEMENT course_code (#PCDATA)>
+    <!ELEMENT course_name (#PCDATA)>
+    <!ELEMENT reg_no (#PCDATA)>
+]>
+<school>
+    <course>
+        <course_code>C101</course_code>
+        <course_name>Java Programming</course_name>
+        <reg_no>101</reg_no>
+    </course>
+    <course>
+        <course_code>C102</course_code>
+        <course_name>Python Programming</course_name>
+    </course>
+    <course>
+        <course_code>C103</course_code>
+        <course_name>Web Technology</course_name>
+        <reg_no>103</reg_no>
+    </course>
+</school>
+
+
+validate.py
+
+
+from lxml import etree
+
+tree = etree.parse("school.xml")
+dtd = tree.docinfo.internalDTD
+
+if dtd.validate(tree):
+    print("XML is valid")
+else:
+    print("XML is invalid")
+    print(dtd.error_log)
+
+
+
+EXTERNAL :
+
+SchoolDTD/
+│
+├── school.xml
+│
+├── school.dtd
+│
+└── validate.py
+
+python -m pip install lxml
+python validate.py
+
+school.dtd
+
+<!ELEMENT school (course+)>
+<!ELEMENT course (course_code, course_name, reg_no)>
+<!ELEMENT course_code (#PCDATA)>
+<!ELEMENT course_name (#PCDATA)>
+<!ELEMENT reg_no (#PCDATA)>
+
+school.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE school SYSTEM "school.dtd">
+
+<school>
+    <course>
+        <course_code>C101</course_code>
+        <course_name>Java Programming</course_name>
+        <reg_no>101</reg_no>
+    </course>
+
+    <course>
+        <course_code>C102</course_code>
+        <course_name>Python Programming</course_name>
+        <reg_no>102</reg_no>
+    </course>
+
+    <course>
+        <course_code>C103</course_code>
+        <course_name>Web Technology</course_name>
+        <reg_no>103</reg_no>
+    </course>
+</school>
+
+
+validate.py
+
+from lxml import etree
+
+parser = etree.XMLParser(load_dtd=True)
+tree = etree.parse("school.xml", parser)
+dtd = tree.docinfo.externalDTD
+
+if dtd.validate(tree):
+    print("XML is valid")
+else:
+    print("XML is invalid")
+    print(dtd.error_log)
+
+
+school.xsd
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="school">
+        <xs:complexType>
+            <xs:sequence>
+
+                <xs:element name="course" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+
+                            <xs:element name="course_code" type="xs:string"/>
+                            <xs:element name="course_name" type="xs:string"/>
+                            <xs:element name="reg_no" type="xs:string"/>
+
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
+
+
+Format books.xml and display it using CSS and XSLT.
+
+display/
+    ├── school.xml
+    ├── style.css
+    └── school.xsl
+school.xml
+
+
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="school.xsl"?>
+
+<school>
+    <course>
+        <course_code>C101</course_code>
+        <course_name>Java Programming</course_name>
+        <reg_no>101</reg_no>
+    </course>
+
+    <course>
+        <course_code>C102</course_code>
+        <course_name>Python Programming</course_name>
+        <reg_no>102</reg_no>
+    </course>
+
+    <course>
+        <course_code>C103</course_code>
+        <course_name>Web Technology</course_name>
+        <reg_no>103</reg_no>
+    </course>
+</school>
+
+
+school.xsl
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <xsl:template match="/">
+        <html>
+            <head>
+                <title>School Courses</title>
+            </head>
+            <body>
+                <h2>School Course Details</h2>
+
+                <table border="1" cellpadding="8">
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Registration Number</th>
+                    </tr>
+
+                    <xsl:for-each select="school/course">
+                        <tr>
+                            <td><xsl:value-of select="course_code"/></td>
+                            <td><xsl:value-of select="course_name"/></td>
+                            <td><xsl:value-of select="reg_no"/></td>
+                        </tr>
+                    </xsl:for-each>
+
+                </table>
+            </body>
+        </html>
+    </xsl:template>
+
+</xsl:stylesheet>
+
+
+validate.py
+
+from lxml import etree
+
+xml = etree.parse("school.xml")
+xsl = etree.parse("school.xsl")
+
+transform = etree.XSLT(xsl)
+result = transform(xml)
+
+with open("output.html", "wb") as file:
+    file.write(etree.tostring(
+        result,
+        pretty_print=True,
+        method="html",
+        encoding="UTF-8"
+    ))
+
+print("XSLT transformation successful!")
+print("Open output.html in your browser.")
+
+
+
+</xsl:stylesheet>For displaying just double click the html file..
+
+
+testing:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TechFest Registration</title>
+</head>
+<body>
+    <h2>TechFest Registration</h2>
+
+    <form id="regForm">
+        <input id="name" placeholder="Full Name" required>
+        <input id="email" type="email"
+               placeholder="Email" required>
+        <select id="event">
+            <option>Robotics</option>
+            <option>Web Development</option>
+        </select>
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="successMessage"
+       style="color:green"></p>
+
+    <h3>Participants</h3>
+    <ul id="participants"></ul>
+
+    <script>
+        document.getElementById("regForm")
+        .addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const name =
+                document.getElementById("name").value;
+            const event =
+                document.getElementById("event").value;
+
+            // BUG: incorrect element ID
+           const msg = document.getElementById("successMessage");
+
+            msg.style.display = "block";
+            msg.textContent =
+                "Registered " + name + " for " + event + "!";
+
+            const li = document.createElement("li");
+            li.textContent = name + " - " + event;
+            document.getElementById("participants")
+                .appendChild(li);
+        });
+    </script>
+</body>
+</html>
+
+
+SOAP:
+
+node -v
+npm -v
+
+cd Desktop
+mkdir smart-queue-system
+cd smart-queue-system
+npm init -y
+
+npm install express soap
+
+
+node rest_server.js
+
+node soap_server.js
+
+
+node soap_client.js
+
+
+rest_server.js
+
+
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+let queue = [
+  {
+    id: 1,
+    token: 1,
+    customerName: "Hemalatha",
+    service: "General Enquiry",
+    counter: 1,
+    status: "Completed"
+  },
+  {
+    id: 2,
+    token: 2,
+    customerName: "Karthik",
+    service: "Bill Payment",
+    counter: 2,
+    status: "Serving"
+  },
+  {
+    id: 3,
+    token: 3,
+    customerName: "Nithya",
+    service: "Account Service",
+    counter: 3,
+    status: "Waiting"
+  }
+];
+
+app.get("/api/queue", (req, res) => {
+  res.json(queue);
+});
+
+app.post("/api/queue", (req, res) => {
+  const item = req.body;
+
+  item.id = queue.length + 1;
+  item.token = queue.length + 1;
+  item.status = "Waiting";
+
+  queue.push(item);
+
+  res.status(201).json({
+    message: "Queue token generated successfully",
+    queue: item
+  });
+});
+
+app.listen(4000, () => {
+  console.log(
+    "REST service running at http://localhost:4000/api/queue"
+  );
+});
+
+
+
+
+soap_client.js
+
+const soap = require("soap");
+
+const url = "http://localhost:4001/queueService?wsdl";
+
+soap.createClient(url, (err, client) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  client.GetQueue({ id: 1 }, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+    }
+  });
+});
+
+
+soap_server.js
+
+
+
+const http = require("http");
+const soap = require("soap");
+
+const service = {
+  QueueService: {
+    QueuePort: {
+      GetQueue: function(args) {
+        return {
+          token: 2,
+          customerName: "Karthik",
+          service: "Bill Payment",
+          counter: 2,
+          status: "Serving"
+        };
+      }
+    }
+  }
+};
+
+const xml = `
+<definitions
+ xmlns="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:tns="http://localhost:4001/queueService"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ name="QueueService"
+ targetNamespace="http://localhost:4001/queueService">
+
+ <types>
+  <xsd:schema targetNamespace="http://localhost:4001/queueService">
+   <xsd:element name="GetQueueRequest">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="id" type="xsd:int"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="GetQueueResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="token" type="xsd:int"/>
+      <xsd:element name="customerName" type="xsd:string"/>
+      <xsd:element name="service" type="xsd:string"/>
+      <xsd:element name="counter" type="xsd:int"/>
+      <xsd:element name="status" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </types>
+
+ <message name="GetQueueInput">
+  <part name="parameters" element="tns:GetQueueRequest"/>
+ </message>
+ <message name="GetQueueOutput">
+  <part name="parameters" element="tns:GetQueueResponse"/>
+ </message>
+
+ <portType name="QueuePortType">
+  <operation name="GetQueue">
+   <input message="tns:GetQueueInput"/>
+   <output message="tns:GetQueueOutput"/>
+  </operation>
+ </portType>
+
+ <binding name="QueueBinding" type="tns:QueuePortType">
+  <soap:binding style="document"
+   transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="GetQueue">
+   <soap:operation soapAction="GetQueue"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+  </operation>
+ </binding>
+
+ <service name="QueueService">
+  <port name="QueuePort" binding="tns:QueueBinding">
+   <soap:address location="http://localhost:4001/queueService"/>
+  </port>
+ </service>
+</definitions>
+`;
+
+const server = http.createServer((req, res) => {
+  res.end("SOAP Server Running");
+});
+
+server.listen(4001, () => {
+  soap.listen(server, "/queueService", service, xml);
+
+  console.log(
+    "SOAP service running at http://localhost:4001/queueService?wsdl"
+  );
+});
+
+
+
+

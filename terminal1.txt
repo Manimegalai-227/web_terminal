@@ -1,0 +1,558 @@
+
+HTML/CSS and React:
+
+npm create vite@latest CampusReadsReact -- --template react
+cd CampusReadsReact
+npm install
+open the file
+
+
+src/App.jsx
+
+
+
+
+import { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [name, setName] = useState('');
+  const [rollNo, setRollNo] = useState('');
+  const [department, setDepartment] = useState('');
+  const [year, setYear] = useState('');
+  const [students, setStudents] = useState([]);
+
+  function addStudent(e) {
+    e.preventDefault();
+
+    if (name && rollNo && department && year) {
+      setStudents([
+        ...students,
+        { name, rollNo, department, year }
+      ]);
+
+      setName('');
+      setRollNo('');
+      setDepartment('');
+      setYear('');
+    }
+  }
+
+  return (
+    <div className="container">
+      <h1>Student Management System</h1>
+      <p>Manage Student Details</p>
+
+      <form onSubmit={addStudent}>
+        <input
+          type="text"
+          placeholder="Student Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Roll Number"
+          value={rollNo}
+          onChange={e => setRollNo(e.target.value)}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Department"
+          value={department}
+          onChange={e => setDepartment(e.target.value)}
+          required
+        />
+
+        <select
+          value={year}
+          onChange={e => setYear(e.target.value)}
+          required
+        >
+          <option value="">Select Year</option>
+          <option value="I Year">I Year</option>
+          <option value="II Year">II Year</option>
+          <option value="III Year">III Year</option>
+          <option value="IV Year">IV Year</option>
+        </select>
+
+        <button type="submit">Add Student</button>
+      </form>
+
+      <h2>Student List</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Roll Number</th>
+            <th>Department</th>
+            <th>Year</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {students.map((student, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{student.name}</td>
+              <td>{student.rollNo}</td>
+              <td>{student.department}</td>
+              <td>{student.year}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default App;
+
+src/App.css:
+
+
+
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: white;
+  color: #222;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1 {
+  color: #2457a7;
+  margin-bottom: 5px;
+}
+
+p {
+  color: #666;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 25px 0;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+}
+
+button {
+  padding: 10px 16px;
+  background: #2457a7;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #173d78;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: #eaf0fa;
+  color: #2457a7;
+}
+
+tr:hover {
+  background: #f7f9fc;
+}
+
+
+npm run dev
+
+
+
+Add rating stars, total fine, low-stock badge and a countdown timer to CampusReads.
+src/App.jsx
+
+
+import { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  const [seconds, setSeconds] = useState(60);
+
+  useEffect(() => {
+    if (seconds === 0) return;
+
+    const timer = setTimeout(() => {
+      setSeconds(seconds - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [seconds]);
+
+  const books = [
+    { name: 'Java Programming', rating: 4, fine: 10, stock: 2 },
+    { name: 'Web Technology', rating: 5, fine: 20, stock: 8 },
+    { name: 'Database Systems', rating: 3, fine: 15, stock: 1 }
+  ];
+
+  return (
+    <div>
+      <h1>CampusReads</h1>
+      <h3>Library Book List</h3>
+
+      <p>⏳ Countdown: {seconds} seconds</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Book Name</th>
+            <th>Rating</th>
+            <th>Total Fine</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {books.map((book, index) => (
+            <tr key={index}>
+              <td>{book.name}</td>
+              <td>
+                {'★'.repeat(book.rating)}
+                {'☆'.repeat(5 - book.rating)}
+              </td>
+              <td>₹{book.fine}</td>
+              <td>
+                {book.stock <= 2
+                  ? 'Low Stock'
+                  : 'Available'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default App;
+
+
+2. src/App.css
+
+
+body {
+  font-family: Arial;
+  margin: 30px;
+}
+
+h1 {
+  color: blue;
+}
+
+table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid gray;
+  text-align: left;
+}
+
+th {
+  background: lightblue;
+}
+
+td:nth-child(2) {
+  color: orange;
+}
+
+td:nth-child(4) {
+  color: red;
+}
+
+
+npm run dev
+
+CRUD with frontend and mongo:
+Establish a MySQL connection using Node.js (Express) and perform CRUD on book records.
+
+
+mkdir BookManagement
+cd BookManagement
+mkdir backend
+cd backend
+npm init -y
+npm install express mongoose cors dotenv
+
+
+
+cd BookManagement
+npm create vite@latest frontend -- --template react
+cd frontend
+npm install
+
+backend/server.js
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('MongoDB Connected Successfully');
+
+        app.listen(process.env.PORT || 3000, () => {
+            console.log('Server running on port 3000');
+        });
+    })
+    .catch(err => {
+        console.log('MongoDB Error:', err.message);
+    });
+
+// Book Schema and Model
+const Book = mongoose.model('Book', {
+    title: { type: String, required: true },
+    author: { type: String, required: true },
+    price: { type: Number, required: true, min: 0 }
+});
+
+// CREATE - Add a book
+app.post('/books', async (req, res) => {
+    try {
+        const book = await Book.create(req.body);
+        res.status(201).json(book);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+// READ - Display all books
+app.get('/books', async (req, res) => {
+    try {
+        const books = await Book.find();
+        res.json(books);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// UPDATE - Edit a book
+app.put('/books/:id', async (req, res) => {
+    try {
+        const book = await Book.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
+        }
+
+        res.json(book);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+// DELETE - Remove a book
+app.delete('/books/:id', async (req, res) => {
+    try {
+        const book = await Book.findByIdAndDelete(req.params.id);
+
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
+        }
+
+        res.json({ message: 'Book deleted successfully' });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+manimegalaiv227_db_user
+yK4LJz05xeoxNG4i
+mongodb+srv://<db_username>:<db_password>@cluster0.otqwc5x.mongodb.net/
+
+
+frontend/src/App.jsx:
+
+
+import { useEffect, useState } from 'react';
+
+function App() {
+  const [books, setBooks] = useState([]);
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [price, setPrice] = useState('');
+  const [editId, setEditId] = useState('');
+
+  const API = 'http://localhost:3000/books';
+
+  async function loadBooks() {
+    const res = await fetch(API);
+    setBooks(await res.json());
+  }
+
+  useEffect(() => {
+    loadBooks();
+  }, []);
+
+  async function saveBook(e) {
+    e.preventDefault();
+
+    await fetch(editId ? `${API}/${editId}` : API, {
+      method: editId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, author, price: Number(price) })
+    });
+
+    setTitle('');
+    setAuthor('');
+    setPrice('');
+    setEditId('');
+    loadBooks();
+  }
+
+  function editBook(book) {
+    setEditId(book._id);
+    setTitle(book.title);
+    setAuthor(book.author);
+    setPrice(book.price);
+  }
+
+  async function deleteBook(id) {
+    await fetch(`${API}/${id}`, { method: 'DELETE' });
+    loadBooks();
+  }
+
+  return (
+    <div>
+      <h1>Book Management</h1>
+
+      <form onSubmit={saveBook}>
+        <input
+          placeholder="Book Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+        />
+
+        <input
+          placeholder="Author"
+          value={author}
+          onChange={e => setAuthor(e.target.value)}
+          required
+        />
+
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={e => setPrice(e.target.value)}
+          required
+        />
+
+        <button type="submit">
+          {editId ? 'Update' : 'Add Book'}
+        </button>
+      </form>
+
+      <h2>Book List</h2>
+
+      {books.map(book => (
+        <p key={book._id}>
+          {book.title} - {book.author} - ₹{book.price}{' '}
+          <button onClick={() => editBook(book)}>Edit</button>
+          <button onClick={() => deleteBook(book._id)}>Delete</button>
+        </p>
+      ))}
+    </div>
+  );
+}
+
+export default App;
+
+
+app.css
+
+
+body {
+  font-family: Arial;
+  margin: 30px;
+}
+
+h1 {
+  color: blue;
+}
+
+input {
+  padding: 8px;
+  margin: 5px;
+}
+
+button {
+  padding: 8px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+p {
+  padding: 10px;
+  border-bottom: 1px solid gray;
+}
+
+
+create .env file
+MONGO_URI=mongodb+srv://manimegalaiv227_db_user:yK4LJz05xeoxNG4i@cluster0.otqwc5x.mongodb.net/
+
+
+3. Run the application
+Terminal 1 — Backend
+cd BookManagement\backend
+node server.js
+
+
+Terminal 2 — Frontend
+cd BookManagement\frontend
+npm run dev
+
+under dataexplorer connect the cluster
+
+
